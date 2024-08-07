@@ -8,4 +8,5 @@ python-multipart
 pillow
 bcrypt
 mercadopago
-python-dotenv
+python-dotenv 
+mailersend
