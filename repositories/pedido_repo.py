@@ -1,8 +1,8 @@
 from datetime import datetime
 import sqlite3
 from typing import List, Optional
-from repositories.item_pedido_repo import ItemPedidoRepo
 from models.pedido_model import Pedido
+from repositories.item_pedido_repo import ItemPedidoRepo
 from sql.pedido_sql import *
 from util.database import obter_conexao
 

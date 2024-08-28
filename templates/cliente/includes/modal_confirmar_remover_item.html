@@ -1,4 +1,4 @@
-<div class="modal fade" id="confirmarCancelamento" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog">
+<div class="modal fade" id="confirmarRemocao" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header text-bg-danger">
@@ -7,14 +7,14 @@
                 </h5>
             </div>
             <div class="modal-body">
-                Deseja realmente cancelar este pedido?
+                Deseja realmente remover o item do carrinho?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Não
                 </button>
-                <form action="/cliente/post_cancelar_pedido" method="post">
-                    <input type="hidden" name="id_pedido" value="{{pedido.id}}">
+                <form action="/cliente/post_remover_item" method="post">
+                    <input type="hidden" name="id_produto" value="{{i.id_produto}}">
                     <button class="btn btn-danger">Sim</button>
                 </form>
             </div>

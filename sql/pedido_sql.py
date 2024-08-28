@@ -33,7 +33,7 @@ SQL_ATUALIZAR_PARA_FECHAR = """
 """
 
 SQL_ATUALIZAR_VALOR_TOTAL = """
-    UPDATE pedido,
+    UPDATE pedido
     SET valor_total=?
     WHERE id=?
 """

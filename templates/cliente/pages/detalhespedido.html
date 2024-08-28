@@ -1,10 +1,10 @@
 {% extends "pages/base.html" %}
-{% block subtitulo %}Detalhes do Pedido{{ "{:06d}"pedido.id if pedido }}{% endblock %}
+{% block subtitulo %}Detalhes do Pedido {{ "{:06d}".format(pedido.id) if pedido }}{% endblock %}
 {% block conteudo %}
 {% if not pedido or not pedido.itens: %}
 <h3>Não há como exibir detalhes de um pedido inexistente ou vazio.</h3>
 {% else: %}
-<h1 class="display-5">Detalhes do Pedido<b>{{ "{:06d}".format(pedido.id) }}</b></h1>
+<h1 class="display-5">Detalhes do Pedido <b>{{ "{:06d}".format(pedido.id) }}</b></h1>
 <hr>
 <div class="row">
     <div class="col-4">
@@ -14,20 +14,15 @@
             {{pedido.endereco_entrega | safe}}
         </p>
         <h2 class="display-6">Valor</h2>
-        <h3 class="text-success">R$ {{"{:,.2f}".format(pedido.valor_total)}}</h3>
+        <h3 class="text-success">R$ {{ "{:,.2f}".format(pedido.valor_total) }}</h3>
         {% if pedido.estado == "pendente": %}
-        <button class="btn btn-danger btn-lg " data-bs-toggle="modal"
-            data-bs-target="#confirmarCancelamento">CancelarPedido</button>
-        <!-- Modal trigger button -->
-        <button type="button" class="btn btn-primary btn-lg">
-            Launch
-        </button>
-
-        <!-- Modal Body -->
-        <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
+        <button class="btn btn-danger btn-lg w-100 mt-3" data-bs-toggle="modal" data-bs-target="#confirmarCancelamento">
+            <i class="bi bi-x-lg"></i>
+            Cancelar Pedido</button>
+        <a href="/cliente/pagamentopedido/{{pedido.id}}" class="btn btn-success btn btn-lg mt-3 w-100">
+            <img src="/static/img/iconemercadopago.svg" style="height: 24px">
+            Pagar com Mercado Pago</a>
         {% include "includes/modal_confirmar_cancelar_pedido.html" %}
-
-
         {% endif %}
     </div>
     <div class="col-8">
