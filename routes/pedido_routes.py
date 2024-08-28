@@ -4,12 +4,12 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 import mercadopago as mp
 import os
 
-from dtos.alterar_cliente_dto import AlterarClienteDTO
+from dtos.alterar_usuario_dto import AlterarUsuarioDTO
 from dtos.alterar_senha_dto import AlterarSenhaDTO
-from models.cliente_model import Cliente
+from models.usuario_model import Usuario
 from models.item_pedido_model import ItemPedido
 from models.pedido_model import EstadoPedido, Pedido
-from repositories.cliente_repo import ClienteRepo
+from repositories.usuario_repo import UsuarioRepo
 from repositories.item_pedido_repo import ItemPedidoRepo
 from repositories.pedido_repo import PedidoRepo
 from repositories.produto_repo import ProdutoRepo
