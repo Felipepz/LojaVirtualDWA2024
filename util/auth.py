@@ -12,8 +12,8 @@ async def obter_usuario_logado(request: Request) -> Optional[Usuario]:
         token = request.cookies[NOME_COOKIE_AUTH]
         if token.strip() == "":
             return None
-        cliente = UsuarioRepo.obter_por_token(token)
-        return cliente
+        usuario = UsuarioRepo.obter_por_token(token)
+        return usuario
     except KeyError:
         return None
 

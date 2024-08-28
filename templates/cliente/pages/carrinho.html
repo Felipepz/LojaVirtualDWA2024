@@ -44,11 +44,13 @@
                 </form>
             </td>
             <td>{{ "{:,.2f}".format(i.valor_item) }}</td>
-                <td>
-                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmarRemocao">
+            <td>
+                <form action="/cliente/post_remover_item" method="post" class="d-inline-block">
+                    <input type="hidden" name="id_produto" value="{{i.id_produto}}">
+                    <button class="btn btn-sm btn-danger">
                         <i class="bi bi-trash"></i>
                     </button>
-                    {% include "includes/modal_confirmar_remover_item.html" %}
+                </form>
             </td>
         </tr>
         {% endfor %}

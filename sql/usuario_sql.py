@@ -7,7 +7,7 @@ SQL_CRIAR_TABELA = """
         endereco TEXT NOT NULL,
         telefone TEXT NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
-        perfil INTEGER DEFAULT 1,   
+        perfil INTEGER DEFAULT 1,
         senha TEXT NOT NULL,
         token TEXT)
 """
@@ -66,8 +66,8 @@ SQL_OBTER_POR_TOKEN = """
 """
 
 SQL_OBTER_QUANTIDADE_POR_PERFIL = """
-    SELECT COUNT(*) 
-    FROM usuario 
+    SELECT COUNT(*)
+    FROM usuario
     WHERE perfil=?
 """
 

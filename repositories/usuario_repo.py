@@ -29,7 +29,7 @@ class UsuarioRepo:
                         usuario.telefone,
                         usuario.email,
                         usuario.perfil,
-                        usuario.senha
+                        usuario.senha                        
                     ),
                 )
                 if cursor.rowcount > 0:
@@ -40,7 +40,7 @@ class UsuarioRepo:
             return None
 
     @classmethod
-    def obter_todos_por_perfil(cls, perfil: int =1) -> List[Usuario]:
+    def obter_todos_por_perfil(cls, perfil: int = 1) -> List[Usuario]:
         try:
             with obter_conexao() as conexao:
                 cursor = conexao.cursor()
@@ -101,7 +101,7 @@ class UsuarioRepo:
         try:
             with obter_conexao() as conexao:
                 cursor = conexao.cursor()
-                tupla = cursor.execute(SQL_OBTER_QUANTIDADE_POR_PERFIL, (perfil, )).fetchone()
+                tupla = cursor.execute(SQL_OBTER_QUANTIDADE_POR_PERFIL, (perfil,)).fetchone()
                 return int(tupla[0])
         except sqlite3.Error as ex:
             print(ex)
