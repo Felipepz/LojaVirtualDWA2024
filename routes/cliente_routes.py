@@ -120,7 +120,7 @@ async def get_carrinho(request: Request):
     total_pedido = sum([item.valor_item for item in itens_pedido])
     return templates.TemplateResponse(
         "pages/carrinho.html",
-        {"request": request, "itens": itens_pedido, "valor_total": total_pedido, "pedido": pedido_carrinho},
+        {"request": request, "itens": itens_pedido, "valor_total": total_pedido},
     )
 
 
