@@ -3,8 +3,8 @@ from pydantic import BaseModel, field_validator
 from util.validators import *
 
 
-class AlterarProdutoDTO(BaseModel):
-    id : int
+class AlterarProdutoDto(BaseModel):
+    id: int
     nome: str
     preco: float    
     descricao: str
@@ -12,7 +12,13 @@ class AlterarProdutoDTO(BaseModel):
 
     @field_validator("id")
     def validar_id(cls, v):
-        msg = is_greater_than(v, "id", 0)
+        msg = is_greater_than(v, "Id", 0)
+        if msg: raise ValueError(msg)
+        return v
+
+    @field_validator("nome")
+    def validar_nome(cls, v):
+        msg = is_size_between(v, "Nome", 2, 128)
         if msg: raise ValueError(msg)
         return v
 
