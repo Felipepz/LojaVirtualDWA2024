@@ -1,12 +1,7 @@
-fastapi
 uvicorn
-httpie
-requests
-httpx
+fastapi
 jinja2
 python-multipart
-pillow
 bcrypt
-mercadopago
+pyJWT
 python-dotenv
-mailersend

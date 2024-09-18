@@ -1,42 +1,53 @@
-import secrets
-from typing import Optional
+import os
 import bcrypt
+import jwt
+from datetime import datetime
+from datetime import timedelta
 from fastapi import HTTPException, Request, status
-from models.usuario_model import Usuario
-from repositories.usuario_repo import UsuarioRepo
-from util.cookies import NOME_COOKIE_AUTH, adicionar_cookie_auth
 
+from dtos.usuario_autenticado import UsuarioAutenticado
 
-async def obter_usuario_logado(request: Request) -> Optional[Usuario]:
+NOME_COOKIE_AUTH = "jwt-token"
+
+async def obter_usuario_logado(request: Request) -> dict:
     try:
         token = request.cookies[NOME_COOKIE_AUTH]
         if token.strip() == "":
             return None
-        usuario = UsuarioRepo.obter_por_token(token)
+        dados = validar_token(token)
+        usuario = UsuarioAutenticado(
+            nome = dados["nome"], 
+            email = dados["email"], 
+            perfil= dados["perfil"])
+        if "mensagem" in dados.keys():
+            usuario.mensagem = dados["mensagem"]
         return usuario
     except KeyError:
         return None
+    
 
-
-async def middleware_autenticacao(request: Request, call_next):
+async def checar_autenticacao(request: Request, call_next):
     usuario = await obter_usuario_logado(request)
     request.state.usuario = usuario
     response = await call_next(request)
-    if response.status_code == status.HTTP_303_SEE_OTHER:
+    if response.status_code == status.HTTP_307_TEMPORARY_REDIRECT:
         return response
-    if usuario:
-        token = request.cookies[NOME_COOKIE_AUTH]
-        adicionar_cookie_auth(response, token)
+    # if usuario:
+    #     token = request.cookies[NOME_COOKIE_AUTH]
+    #     criar_cookie_auth(response, token)
     return response
 
 
-async def checar_permissao(request: Request):
+async def checar_autorizacao(request: Request):
     usuario = request.state.usuario if hasattr(request.state, "usuario") else None
-    area_do_cliente = request.url.path.startswith("/cliente")
-    area_do_admin = request.url.path.startswith("/admin")
-    if (area_do_cliente or area_do_admin) and not usuario:
+    area_do_usuario = request.url.path.startswith("/usuario")
+    area_do_aluno = request.url.path.startswith("/aluno")
+    area_do_professor = request.url.path.startswith("/professor")
+    if (area_do_usuario or area_do_aluno or area_do_professor) and not usuario.perfil:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-    if (area_do_cliente and usuario.perfil != 1) or (area_do_admin and usuario.perfil != 0):
+    if area_do_aluno and usuario.perfil != 1:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    if area_do_professor and usuario.perfil != 2:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
@@ -53,13 +64,42 @@ def conferir_senha(senha: str, hash_senha: str) -> bool:
         return bcrypt.checkpw(senha.encode(), hash_senha.encode())
     except ValueError:
         return False
+    
+
+def criar_token(nome: str, email: str, perfil: int) -> str:
+    payload = {
+        "nome": nome,
+        "email": email,
+        "perfil": perfil,
+        "exp": datetime.now() + timedelta(days=1)
+    }
+    return jwt.encode(payload, 
+        os.getenv("JWT_SECRET"),
+        os.getenv("JWT_ALGORITHM"))
 
 
-def gerar_token(length: int = 32) -> str:
+def validar_token(token: str) -> dict:
     try:
-        return secrets.token_hex(length)
-    except ValueError:
-        return ""
+        return jwt.decode(token, 
+            os.getenv("JWT_SECRET"),
+            os.getenv("JWT_ALGORITHM"))
+    except jwt.ExpiredSignatureError:
+        return { "nome": None, "email": None, "perfil": 0, "mensagem": "Token expirado" }
+    except jwt.InvalidTokenError:
+        return { "nome": None, "email": None, "perfil": 0, "mensagem": "Token inválido" }        
+    except Exception as e:
+        return { "nome": None, "email": None, "perfil": 0, "mensagem": f"Erro: {e}" }
+    
+
+def criar_cookie_auth(response, token):
+    response.set_cookie(
+        key=NOME_COOKIE_AUTH,
+        value=token,
+        max_age=1800,
+        httponly=True,
+        samesite="lax",
+    )
+    return response
 
 
 def configurar_swagger_auth(app):

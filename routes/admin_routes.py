@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Request, Response
+from fastapi import APIRouter, Path
 from fastapi.responses import JSONResponse
 
 from dtos.alterar_pedido_dto import AlterarPedidoDto
@@ -12,7 +12,7 @@ from repositories.pedido_repo import PedidoRepo
 from repositories.produto_repo import ProdutoRepo
 
 
-router = APIRouter(prefix="/manager")
+router = APIRouter(prefix="/admin")
 
 
 @router.get("/obter_produtos")
@@ -63,3 +63,4 @@ async def obter_pedido(id_pedido: int = Path(..., title="Id do Pedido", ge=1)):
 async def obter_pedidos_por_estado(estado: EstadoPedido = Path(..., title="Estado do Pedido")):
     pedidos = PedidoRepo.obter_todos_por_estado(estado.value)
     return pedidos
+
