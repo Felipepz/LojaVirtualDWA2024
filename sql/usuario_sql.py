@@ -1,46 +1,85 @@
 SQL_CRIAR_TABELA = """
     CREATE TABLE IF NOT EXISTS usuario (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    nome TEXT NOT NULL, 
-    email TEXT NOT NULL UNIQUE,
-    telefone TEXT NOT NULL UNIQUE, 
-    senha TEXT NOT NULL,
-    tema TEXT NOT NULL,
-    perfil INTEGER NOT NULL)
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        cpf TEXT NOT NULL UNIQUE,
+        data_nascimento DATE NOT NULL,
+        endereco TEXT NOT NULL,
+        telefone TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
+        perfil INTEGER DEFAULT 1,
+        senha TEXT NOT NULL,
+        token TEXT)
 """
 
-SQL_INSERIR_USUARIO = """
-    INSERT INTO usuario 
-    (nome, email, telefone, senha, tema, perfil)
-    VALUES (?, ?, ?, ?, "default", ?)
+SQL_INSERIR = """
+    INSERT INTO usuario(nome, cpf, data_nascimento, endereco, telefone, email, perfil, senha)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 """
 
-
-SQL_CHECAR_CREDENCIAIS = """
-    SELECT nome, email, perfil, senha
+SQL_OBTER_TODOS_POR_PERFIL = """
+    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email
     FROM usuario
-    WHERE email = ?
+    WHERE perfil=?
+    ORDER BY nome
 """
 
-SQL_ATUALIZAR_DADOS = """
+SQL_ALTERAR = """
     UPDATE usuario
-    SET nome = ?, email = ?, telefone = ?
-    WHERE email = ?
+    SET nome=?, cpf=?, data_nascimento=?, endereco=?, telefone=?, email=?
+    WHERE id=?
 """
 
-SQL_ATUALIZAR_SENHA = """
+SQL_ALTERAR_TOKEN = """
     UPDATE usuario
-    SET senha = ?
-    WHERE email = ?
+    SET token=?
+    WHERE id=?
 """
 
-SQL_ATUALIZAR_TEMA = """
+SQL_ALTERAR_SENHA = """
     UPDATE usuario
-    SET tema = ?
-    WHERE email = ?
+    SET senha=?
+    WHERE id=?
 """
 
-SQL_EXCLUIR_USUARIO = """
-    DELETE FROM usuario
-    WHERE email = ?
+SQL_EXCLUIR = """
+    DELETE FROM usuario    
+    WHERE id=?
+"""
+
+SQL_OBTER_POR_ID = """
+    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email, perfil
+    FROM usuario
+    WHERE id=?
+"""
+
+SQL_OBTER_POR_EMAIL = """
+    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email, perfil, senha
+    FROM usuario
+    WHERE email=?
+"""
+
+SQL_OBTER_POR_TOKEN = """
+    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email, perfil
+    FROM usuario
+    WHERE token=?
+"""
+
+SQL_OBTER_QUANTIDADE_POR_PERFIL = """
+    SELECT COUNT(*)
+    FROM usuario
+    WHERE perfil=?
+"""
+
+SQL_OBTER_BUSCA = """
+    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email
+    FROM usuario
+    WHERE nome LIKE ? OR cpf LIKE ?
+    ORDER BY nome
+    LIMIT ? OFFSET ?
+"""
+
+SQL_OBTER_QUANTIDADE_BUSCA = """
+    SELECT COUNT(*) FROM usuario
+    WHERE nome LIKE ? OR cpf LIKE ?
 """

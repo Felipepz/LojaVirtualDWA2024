@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import date
 from typing import Optional
 
 
@@ -6,8 +7,13 @@ from typing import Optional
 class Usuario:
     id: Optional[int] = None
     nome: Optional[str] = None
-    email: Optional[str] = None
+    cpf: Optional[str] = None
+    data_nascimento: Optional[date] = None
+    endereco: Optional[str] = None
     telefone: Optional[str] = None
-    senha: Optional[str] = None
-    tema: Optional[str] = None
+    email: Optional[str] = None
     perfil: Optional[int] = None
+    senha: Optional[str] = None
+    # usar o campo abaixo somente se 
+    # for autenticação por cookie
+    token: Optional[str] = None

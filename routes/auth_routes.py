@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends, Path, Request, Response
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from dtos.entrar_dto import EntrarDto
 from dtos.problem_details_dto import ProblemDetailsDto
-
 from repositories.usuario_repo import UsuarioRepo
 from util.auth_jwt import conferir_senha, criar_token
 

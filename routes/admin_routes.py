@@ -63,4 +63,3 @@ async def obter_pedido(id_pedido: int = Path(..., title="Id do Pedido", ge=1)):
 async def obter_pedidos_por_estado(estado: EstadoPedido = Path(..., title="Estado do Pedido")):
     pedidos = PedidoRepo.obter_todos_por_estado(estado.value)
     return pedidos
-
