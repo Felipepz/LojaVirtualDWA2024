@@ -18,7 +18,7 @@ async def obter_usuario_logado(request: Request) -> Optional[Usuario]:
         return None
 
 
-async def middleware_autenticacao(request: Request, call_next):
+async def checar_autenticacao(request: Request, call_next):
     usuario = await obter_usuario_logado(request)
     request.state.usuario = usuario
     response = await call_next(request)
@@ -30,7 +30,7 @@ async def middleware_autenticacao(request: Request, call_next):
     return response
 
 
-async def checar_permissao(request: Request):
+async def checar_autorizacao(request: Request):
     usuario = request.state.usuario if hasattr(request.state, "usuario") else None
     area_do_cliente = request.url.path.startswith("/cliente")
     area_do_admin = request.url.path.startswith("/admin")
@@ -60,3 +60,15 @@ def gerar_token(length: int = 32) -> str:
         return secrets.token_hex(length)
     except ValueError:
         return ""
+
+
+def configurar_swagger_auth(app):
+    app.openapi_schema = app.openapi()
+    app.openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }
+    }
+    app.openapi_schema["security"] = [{"BearerAuth": []}]

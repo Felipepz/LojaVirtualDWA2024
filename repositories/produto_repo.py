@@ -11,18 +11,26 @@ from pathlib import Path
 class ProdutoRepo:
     @classmethod
     def criar_tabela(cls):
+        """Cria a tabela de produtos no banco de dados."""
         with obter_conexao() as conexao:
             cursor = conexao.cursor()
             cursor.execute(SQL_CRIAR_TABELA)
 
     @classmethod
     def inserir(cls, produto: Produto) -> Optional[Produto]:
+        """Insere um novo produto no banco de dados, incluindo o id da categoria."""
         try:
             with obter_conexao() as conexao:
                 cursor = conexao.cursor()
                 cursor.execute(
                     SQL_INSERIR,
-                    (produto.nome, produto.preco, produto.descricao, produto.estoque),
+                    (
+                        produto.nome,
+                        produto.preco,
+                        produto.descricao,
+                        produto.estoque,
+                        produto.categoria_id  
+                    ),
                 )
                 if cursor.rowcount > 0:
                     produto.id = cursor.lastrowid
@@ -32,19 +40,8 @@ class ProdutoRepo:
             return None
 
     @classmethod
-    def obter_todos(cls) -> List[Produto]:
-        try:
-            with obter_conexao() as conexao:
-                cursor = conexao.cursor()
-                tuplas = cursor.execute(SQL_OBTER_TODOS).fetchall()
-                produtos = [Produto(*t) for t in tuplas]
-                return produtos
-        except sqlite3.Error as ex:
-            print(ex)
-            return None
-
-    @classmethod
     def alterar(cls, produto: Produto) -> bool:
+        """Atualiza um produto existente, incluindo o id da categoria."""
         try:
             with obter_conexao() as conexao:
                 cursor = conexao.cursor()
@@ -55,6 +52,7 @@ class ProdutoRepo:
                         produto.preco,
                         produto.descricao,
                         produto.estoque,
+                        produto.categoria_id,  
                         produto.id,
                     ),
                 )
@@ -80,6 +78,7 @@ class ProdutoRepo:
             with obter_conexao() as conexao:
                 cursor = conexao.cursor()
                 tupla = cursor.execute(SQL_OBTER_UM, (id,)).fetchone()
+                if not tupla: return None
                 produto = Produto(*tupla)
                 return produto
         except sqlite3.Error as ex:
@@ -136,7 +135,37 @@ class ProdutoRepo:
                 return int(tupla[0])
         except sqlite3.Error as ex:
             print(ex)
-            return None
+            return None 
+        
+    @classmethod
+    def obter_todos(cls) -> List[Produto]:
+        """Retorna todos os produtos no banco de dados."""
+        try:
+            with obter_conexao() as conexao:
+                cursor = conexao.cursor()
+                
+                tuplas = cursor.execute("SELECT * FROM produto").fetchall()  
+                produtos = [Produto(*t) for t in tuplas]  
+                return produtos
+        except sqlite3.Error as ex:
+            print(ex)
+            return [] 
+        
+        
+    @classmethod
+    def obter_por_categoria(cls, categoria_id: int) -> List[Produto]:
+        """Retorna os produtos de uma categoria específica."""
+        try:
+            with obter_conexao() as conexao:
+                cursor = conexao.cursor()
+                tuplas = cursor.execute(SQL_OBTER_POR_CATEGORIA, (categoria_id,)).fetchall()
+                produtos = [Produto(*t) for t in tuplas]  # Criando a lista de objetos Produto
+                return produtos
+        except sqlite3.Error as ex:
+            print(f"Erro ao obter produtos por categoria: {ex}")
+            return []
+
+
 
     @classmethod
     def inserir_produtos_json(cls, arquivo_json: str):
